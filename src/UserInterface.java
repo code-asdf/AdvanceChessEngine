@@ -86,5 +86,6 @@ public class UserInterface extends JPanel {
     }
     public static void newGame() {
         BoardGeneration.initiateStandardChess();
+        Moves.posibleMovesW("",WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
     }
 }
