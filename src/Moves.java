@@ -32,47 +32,71 @@ public class Moves {
         String list = "";
         //x1,y1,x2,y2
         long PAWN_MOVES = (WP>>7)&BLACK_PIECES&~RANK_8&~FILE_A;//capture right
-        for(int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++){
-            if(((PAWN_MOVES>>i)&1)==1){
-                list+=""+(i/8+1)+(i%8-1)+(i/8)+(i%8);
-            }
+        long possibility = PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8+1) +(index%8-1) + (index/8) + (index%8);
+            PAWN_MOVES &=~possibility;
+            possibility = PAWN_MOVES&~(PAWN_MOVES-1);
         }
         PAWN_MOVES = (WP>>9)&BLACK_PIECES&~RANK_8&~FILE_H;//capture left
-        for (int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++){
-            if(((PAWN_MOVES>>i)&1)==1){
-                list+=""+(i/8+1)+(i%8+1)+(i/8)+(i%8);
-            }
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while (possibility != 0)
+        {
+            int index=Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8+1)+(index%8+1)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         PAWN_MOVES=(WP>>8)&EMPTY&~RANK_8;//move 1 forward
-        for(int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++){
-            if(((PAWN_MOVES>>i)&1)==1){
-                list+=""+(i/8+1)+(i%8)+(i/8)+(i%8);
-            }
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while (possibility != 0)
+        {
+            int index=Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8+1)+(index%8)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         PAWN_MOVES = (WP>>16)&EMPTY&(EMPTY>>8)&RANK_4;//move 2 forward
-        for(int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++){
-            if(((PAWN_MOVES>>i)&1)==1){
-                list+=""+(i/8+2)+(i%8)+(i/8)+(i%8);
-            }
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while (possibility != 0)
+        {
+            int index=Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8+2)+(index%8)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         //y1,y2.Promotion Type,"P"
         PAWN_MOVES=(WP>>7)&BLACK_PIECES&RANK_8&~FILE_A;//Pawn promotion by right capture
-        for (int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++) {
-            if (((PAWN_MOVES>>i)&1)==1) {
-                list+=""+(i%8-1)+(i%8)+"QP"+(i%8-1)+(i%8)+"RP"+(i%8-1)+(i%8)+"BP"+(i%8-1)+(i%8)+"NP";
-            }
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while (possibility != 0)
+        {
+            int index=Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8-1)+(index%8)+"QP"+(index%8-1)+(index%8)+"RP"+(index%8-1)+(index%8)+"BP"+(index%8-1)+(index%8)+"NP";
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         PAWN_MOVES=(WP>>9)&BLACK_PIECES&RANK_8&~FILE_H;//pawn promotion by capture left
-        for (int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++) {
-            if (((PAWN_MOVES>>i)&1)==1) {
-                list+=""+(i%8+1)+(i%8)+"QP"+(i%8+1)+(i%8)+"RP"+(i%8+1)+(i%8)+"BP"+(i%8+1)+(i%8)+"NP";
-            }
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while (possibility != 0)
+        {
+            int index=Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8+1)+(index%8)+"QP"+(index%8+1)+(index%8)+"RP"+(index%8+1)+(index%8)+"BP"+(index%8+1)+(index%8)+"NP";
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         PAWN_MOVES=(WP>>8)&EMPTY&RANK_8;//pawn promotion by move 1 forward
-        for (int i=Long.numberOfTrailingZeros(PAWN_MOVES);i<64-Long.numberOfLeadingZeros(PAWN_MOVES);i++) {
-            if (((PAWN_MOVES>>i)&1)==1) {list+=""+(i%8)+(i%8)+"QP"+(i%8)+(i%8)+"RP"+(i%8)+(i%8)+"BP"+(i%8)+(i%8)+"NP";}
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while (possibility != 0)
+        {
+            int index=Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8)+(index%8)+"QP"+(index%8)+(index%8)+"RP"+(index%8)+(index%8)+"BP"+(index%8)+(index%8)+"NP";
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         //y1,y2,Space,"E
+        //en passant
+        
         return list;
     }
     public static void drawBitboard(long bitBoard){
@@ -117,7 +141,7 @@ public class Moves {
             String list="";
             long possibility = PAWN_MOVES&~(PAWN_MOVES-1);// gets the first pawn from the top or we can say the LS bit of pawn in bitboard
             while(possibility!=0){
-                drawBitboard(possibility);
+//                drawBitboard(possibility);
                 int index = Long.numberOfTrailingZeros(possibility);
                 list+=""+(index/8+1)+(index%8-1)+(index/8)+(index%8);
                 PAWN_MOVES&=~(possibility);
