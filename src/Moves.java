@@ -19,16 +19,25 @@ public class Moves {
     static long NOT_WHITE_PIECES;
     static long BLACK_PIECES;
     static long EMPTY;
+    static long RankMasks8[] =/*from rank1 to rank8*/
+            {
+                    0xFFL, 0xFF00L, 0xFF0000L, 0xFF000000L, 0xFF00000000L, 0xFF0000000000L, 0xFF000000000000L, 0xFF00000000000000L
+            };
+    static long FileMasks8[] =/*from fileA to FileH*/
+            {
+                    0x101010101010101L, 0x202020202020202L, 0x404040404040404L, 0x808080808080808L,
+                    0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L
+            };
     public static String posibleMovesW(String history,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK) {
         NOT_WHITE_PIECES=~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
         BLACK_PIECES=BP|BN|BB|BR|BQ;//omitted BK to avoid illegal capture
         EMPTY=~(WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK);
         timeExperiment(WP);
-        String list = possiblePW(history,WP);
-        // have to add funlist of other moves as well
+        String list = possiblePW(history,WP,BP);
+        // have to add func list of other moves as well
         return list;
     }
-    public static String possiblePW(String history,long WP){
+    public static String possiblePW(String history,long WP,long BP){
         String list = "";
         //x1,y1,x2,y2
         long PAWN_MOVES = (WP>>7)&BLACK_PIECES&~RANK_8&~FILE_A;//capture right
@@ -96,7 +105,23 @@ public class Moves {
         }
         //y1,y2,Space,"E
         //en passant
-        
+        if(history.length()>=4){    //1636
+            if((history.charAt(history.length()-1)==history.charAt(history.length()-3)) && Math.abs(history.charAt(history.length()-2)-history.charAt(history.length()-4))==2){
+                int eFile = history.charAt(history.length()-1)-'0';
+                //en passant right
+                possibility = (WP<<1)&BP&RANK_5&~FILE_A&FileMasks8[eFile];//shows piece to remove, not destination
+                if(possibility!=0){
+                    int index =Long.numberOfTrailingZeros(possibility);
+                    list+=""+(index%8-1)+(index%8)+" E";
+                }
+                //en passant left
+                possibility=(WP>>1)&BP&RANK_5&~FILE_H&FileMasks8[eFile];//shows piece to remove, not the destination
+                if(possibility!=0){
+                    int index = Long.numberOfTrailingZeros(possibility);
+                    list+=""+(index%8+1) +(index%8)+" E";
+                }
+            }
+        }
         return list;
     }
     public static void drawBitboard(long bitBoard){
@@ -125,28 +150,13 @@ public class Moves {
         System.out.println("That took "+(endTime-startTime)+" milliseconds");
     }
     public static void tEMethodA(int loopLength,long WP){
-        for(int loop=0;loop<loopLength;loop++){
-            long PAWN_MOVES = (WP>>7)&BLACK_PIECES&~RANK_8&~FILE_A;//capture right
-            String list="";
-            for(int i=0;i<64;i++){
-                if(((PAWN_MOVES>>i)&1)==1){
-                    list+=""+(i/8+1)+(i%8-1)+(i/8)+(i%8);
-                }
-            }
+        for(int loop=0;loop<loopLength;loop++) {
+
         }
     }
     public static void tEMethodB(int loopLength,long WP){
-        for(int loop=0;loop<loopLength;loop++){
-            long PAWN_MOVES = (WP>>7)&BLACK_PIECES&~RANK_8&~FILE_A;//capture right
-            String list="";
-            long possibility = PAWN_MOVES&~(PAWN_MOVES-1);// gets the first pawn from the top or we can say the LS bit of pawn in bitboard
-            while(possibility!=0){
-//                drawBitboard(possibility);
-                int index = Long.numberOfTrailingZeros(possibility);
-                list+=""+(index/8+1)+(index%8-1)+(index/8)+(index%8);
-                PAWN_MOVES&=~(possibility);
-                possibility=PAWN_MOVES&~(PAWN_MOVES-1);
-            }
+        for(int loop=0;loop<loopLength;loop++) {
+
         }
     }
 }
