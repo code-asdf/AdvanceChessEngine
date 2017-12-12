@@ -18,6 +18,7 @@ public class Moves {
     static long KNIGHT_C6=43234889994L;
     static long NOT_WHITE_PIECES;
     static long BLACK_PIECES;
+    static long OCCUPIED;
     static long EMPTY;
     static long RankMasks8[] =/*from rank1 to rank8*/
             {
@@ -28,11 +29,36 @@ public class Moves {
                     0x101010101010101L, 0x202020202020202L, 0x404040404040404L, 0x808080808080808L,
                     0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L
             };
+    static long DiagonalMasks8[] =/*from top left to bottom right*/
+            {
+                    0x1L, 0x102L, 0x10204L, 0x1020408L, 0x102040810L, 0x10204081020L, 0x1020408102040L,
+                    0x102040810204080L, 0x204081020408000L, 0x408102040800000L, 0x810204080000000L,
+                    0x1020408000000000L, 0x2040800000000000L, 0x4080000000000000L, 0x8000000000000000L
+            };
+    static long AntiDiagonalMasks8[] =/*from top right to bottom left*/
+            {
+                    0x80L, 0x8040L, 0x804020L, 0x80402010L, 0x8040201008L, 0x804020100804L, 0x80402010080402L,
+                    0x8040201008040201L, 0x4020100804020100L, 0x2010080402010000L, 0x1008040201000000L,
+                    0x804020100000000L, 0x402010000000000L, 0x201000000000000L, 0x100000000000000L
+            };
+    static long HAndVMoves(int s){
+        long binaryS=1L<<s;
+        long possibilitiesHorizontal = (OCCUPIED-2*binaryS)^Long.reverse(Long.reverse(OCCUPIED)-2*Long.reverse(binaryS));
+        long possibilitiesVertical = ((OCCUPIED&FileMasks8[s%8])-(2*binaryS))^Long.reverse(Long.reverse(OCCUPIED&FileMasks8[s%8])-(2*Long.reverse(binaryS)));
+        return (possibilitiesHorizontal&RankMasks8[s/8]) |  (possibilitiesVertical&FileMasks8[s%8]);
+    }
+    static long DAndAntiDMoves(int s){
+        long binaryS = 1L<<s;
+        long possibilitiesDiagonal = ((OCCUPIED&DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * Long.reverse(binaryS)));
+        long possibilitiesAntiDiagonal = ((OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
+        return (possibilitiesDiagonal&DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
+    }
     public static String posibleMovesW(String history,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK) {
         NOT_WHITE_PIECES=~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
         BLACK_PIECES=BP|BN|BB|BR|BQ;//omitted BK to avoid illegal capture
-        EMPTY=~(WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK);
-        timeExperiment(WP);
+        OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
+        EMPTY=~OCCUPIED;
+//        timeExperiment(WP);
         String list = possiblePW(history,WP,BP);
         // have to add func list of other moves as well
         return list;
