@@ -61,9 +61,9 @@ public class Moves {
 //        timeExperiment(WP);
         String list = possibleWP(history,WP,BP)/*+
                 possibleWN(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)*/+
-                possibleWB(OCCUPIED,WB)/*+
-                possibleWR(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)+
-                possibleWQ(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)+
+                possibleWB(OCCUPIED,WB)+
+                possibleWR(OCCUPIED,WR)+
+                possibleWQ(OCCUPIED,WQ) /*+
                 possibleWK(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)*/;
         return list;
     }
@@ -170,6 +170,44 @@ public class Moves {
             }
             WB&=~i;
             i=WB&~(WB-1);
+        }
+        return list;
+    }
+    public static String possibleWR(long OCCUPIED,long WR){
+        String list="";
+        long i=WR&~(WR-1);
+        long possibility;
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            possibility=HAndVMoves(iLocation)&NOT_WHITE_PIECES;
+            long j=possibility&~(possibility-1);
+            while(j!=0){
+                int index = Long.numberOfTrailingZeros(j);
+                list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
+                possibility&=~possibility;
+                j=possibility&~(possibility-1);
+            }
+            WR&=~i;
+            i=WR&~(WR-1);
+        }
+        return list;
+    }
+    public static String possibleWQ(long OCCUPIED,long WQ){
+        String list ="";
+        long i = WQ&~(WQ-1);
+        long possibility;
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            possibility = (HAndVMoves(iLocation)|DAndAntiDMoves(iLocation)) & NOT_WHITE_PIECES;
+            long j = possibility&~(possibility-1);
+            while(j!=0){
+                int index = Long.numberOfTrailingZeros(j);
+                list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
+                possibility&=~j;
+                j=possibility&~(possibility-1);
+            }
+            WQ&=~i;
+            i=WQ&~(WQ-1);
         }
         return list;
     }
