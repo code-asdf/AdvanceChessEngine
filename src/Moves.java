@@ -59,11 +59,15 @@ public class Moves {
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
         EMPTY=~OCCUPIED;
 //        timeExperiment(WP);
-        String list = possiblePW(history,WP,BP);
-        // have to add func list of other moves as well
+        String list = possibleWP(history,WP,BP)/*+
+                possibleWN(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)*/+
+                possibleWB(OCCUPIED,WB)/*+
+                possibleWR(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)+
+                possibleWQ(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)+
+                possibleWK(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)*/;
         return list;
     }
-    public static String possiblePW(String history,long WP,long BP){
+    public static String possibleWP(String history,long WP,long BP){
         String list = "";
         //x1,y1,x2,y2
         long PAWN_MOVES = (WP>>7)&BLACK_PIECES&~RANK_8&~FILE_A;//capture right
@@ -150,6 +154,25 @@ public class Moves {
         }
         return list;
     }
+    public static String possibleWB(long OCCUPIED,long WB){
+        String list = "";
+        long i=WB&~(WB-1);
+        long possibility;
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            possibility=DAndAntiDMoves(iLocation)&NOT_WHITE_PIECES;
+            long j=possibility&~(possibility-1);
+            while(j!=0){
+                int index = Long.numberOfTrailingZeros(j);
+                list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
+                possibility&=~j;
+                j=possibility&~(possibility-1);
+            }
+            WB&=~i;
+            i=WB&~(WB-1);
+        }
+        return list;
+    }
     public static void drawBitboard(long bitBoard){
         String chessBoard[][] = new String[8][8];
         for(int i=0;i<64;i++){
@@ -164,6 +187,7 @@ public class Moves {
             System.out.println(Arrays.toString(chessBoard[i]));
         }
     }
+
     public static void timeExperiment(long WP){
         int loopLength = 1000;
         long startTime = System.currentTimeMillis();
