@@ -58,12 +58,12 @@ public class Moves {
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
         EMPTY=~OCCUPIED;
 //        timeExperiment(WP);
-        String list = possibleWP(history,WP,BP)/*+
-                possibleWN(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)*/+
+        String list = possibleWP(history,WP,BP)+
+                possibleWN(OCCUPIED,WN)+
                 possibleWB(OCCUPIED,WB)+
                 possibleWR(OCCUPIED,WR)+
-                possibleWQ(OCCUPIED,WQ) /*+
-                possibleWK(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK)*/;
+                possibleWQ(OCCUPIED,WQ)+
+                possibleWK(OCCUPIED,WK);
         return list;
     }
     public static String possibleWP(String history,long WP,long BP){
@@ -235,6 +235,29 @@ public class Moves {
             }
             WQ&=~i;
             i=WQ&~(WQ-1);
+        }
+        return list;
+    }
+    public static String possibleWK(long OCCUPIED,long WK){
+        String list="";
+        long possibility;
+        int iLocation = Long.numberOfTrailingZeros(WK);
+        if(iLocation>9){
+            possibility=KNIGHT_SPAN<<(iLocation-9);
+        }else{
+            possibility=KING_SPAN>>(9-iLocation);
+        }
+        if(iLocation%8<4){
+            possibility&=~FILE_GH&NOT_WHITE_PIECES;
+        }else{
+            possibility&=~FILE_AB&NOT_WHITE_PIECES;
+        }
+        long j=possibility&~(possibility-1);
+        while(j!=0){
+            int index = Long.numberOfTrailingZeros(j);
+            list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
+            possibility&=~j;
+            j=possibility&~(possibility-1);
         }
         return list;
     }
