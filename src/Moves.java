@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Moves {
     static long FILE_A=72340172838076673L;
@@ -14,8 +13,8 @@ public class Moves {
     static long EXTENDED_CENTRE=66229406269440L;
     static long KING_SIDE=-1085102592571150096L;
     static long QUEEN_SIDE=1085102592571150095L;
-    static long KING_B7=460039L;
-    static long KNIGHT_C6=43234889994L;
+    static long KING_SPAN=460039L;
+    static long KNIGHT_SPAN=43234889994L;
     static long NOT_WHITE_PIECES;
     static long BLACK_PIECES;
     static long OCCUPIED;
@@ -151,6 +150,34 @@ public class Moves {
                     list+=""+(index%8+1) +(index%8)+" E";
                 }
             }
+        }
+        return list;
+    }
+    public static String possibleWN(long OCCUPIED,long WN){
+        String list="";
+        long i=WN&~(WN-1);
+        long possibility;
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            if(iLocation>18){
+                possibility=KNIGHT_SPAN<<(iLocation-18);
+            }else{
+                possibility=KNIGHT_SPAN>>(18-iLocation);
+            }
+            if(iLocation%8<4){
+                possibility&=~FILE_GH&NOT_WHITE_PIECES;
+            }else{
+                possibility&=~FILE_AB&NOT_WHITE_PIECES;
+            }
+            long j = possibility&~(possibility-1);
+            while(j!=0){
+                int index = Long.numberOfTrailingZeros(j);
+                list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
+                possibility&=~j ;
+                j=possibility&~(possibility-1);
+            }
+            WN&=~i;
+            i=WN&~(WN-1);
         }
         return list;
     }
