@@ -64,6 +64,7 @@ public class Moves {
                 possibleWR(OCCUPIED,WR)+
                 possibleWQ(OCCUPIED,WQ)+
                 possibleWK(OCCUPIED,WK);
+        unsafeForBlack(WP, WN, WB, WR, WQ, WK, BP, BN, BB, BR, BQ, BK);
         return list;
     }
     public static String possibleWP(String history,long WP,long BP){
@@ -260,6 +261,68 @@ public class Moves {
             j=possibility&~(possibility-1);
         }
         return list;
+    }
+    public static long unsafeForBlack(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK){
+        long unsafe;
+        OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
+        //pawn
+        unsafe=((WP>>7)&~FILE_A);//pawn capture right
+        unsafe|=((WP>>9)&~FILE_H);//pawn capture left
+        long possibility;
+        //knight
+        long i = WN&~(WN-1);
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            if(i>18){
+                possibility = KNIGHT_SPAN<<(iLocation-18);
+            }else{
+                possibility = KNIGHT_SPAN>>(18-iLocation);
+            }
+            if(iLocation%8<4){
+                possibility &=~FILE_GH;
+            }else{
+                possibility &=~FILE_AB;
+            }
+            unsafe|=possibility;
+            WN&=~i;
+            i=WN&~(WN-1);
+        }
+        //bishop/queen
+        long QB = WQ|WB;
+        i=QB&~(QB-1);
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            possibility = DAndAntiDMoves(iLocation);
+            unsafe |= possibility;
+            QB&=~i;
+            i=QB&~(QB-1);
+        }
+        //rook/queen
+        long QR=WQ|WR;
+        i=QR&~(QR-1);
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            possibility = HAndVMoves(iLocation);
+            unsafe |= possibility;
+            QR&=~i;
+            i=QR&~(QR-1);
+        }
+        //king
+        int iLocation = Long.numberOfTrailingZeros(WK);
+        if(iLocation>9){
+            possibility=KING_SPAN<<(iLocation-9);
+        }else{
+            possibility=KING_SPAN>>(9-iLocation);
+        }
+        if(iLocation%8<4){
+            possibility &=~FILE_GH;
+        }else{
+            possibility&=~FILE_AB;
+        }
+        unsafe|=possibility;
+        System.out.println();
+        drawBitboard(unsafe);
+        return unsafe;
     }
     public static void drawBitboard(long bitBoard){
         String chessBoard[][] = new String[8][8];
