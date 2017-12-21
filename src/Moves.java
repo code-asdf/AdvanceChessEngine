@@ -15,8 +15,8 @@ public class Moves {
     static long QUEEN_SIDE=1085102592571150095L;
     static long KING_SPAN=460039L;
     static long KNIGHT_SPAN=43234889994L;
-    static long NOT_WHITE_PIECES;
-    static long BLACK_PIECES;
+    static long NOT_MY_PIECES;
+    static long MY_PIECES;
     static long OCCUPIED;
     static long EMPTY;
     static long RankMasks8[] =/*from rank1 to rank8*/
@@ -41,23 +41,24 @@ public class Moves {
                     0x804020100000000L, 0x402010000000000L, 0x201000000000000L, 0x100000000000000L
             };
     static long HAndVMoves(int s){
+        //REMINDER: requires OCCUPIED to be up to date
         long binaryS=1L<<s;
         long possibilitiesHorizontal = (OCCUPIED-2*binaryS)^Long.reverse(Long.reverse(OCCUPIED)-2*Long.reverse(binaryS));
         long possibilitiesVertical = ((OCCUPIED&FileMasks8[s%8])-(2*binaryS))^Long.reverse(Long.reverse(OCCUPIED&FileMasks8[s%8])-(2*Long.reverse(binaryS)));
         return (possibilitiesHorizontal&RankMasks8[s/8]) |  (possibilitiesVertical&FileMasks8[s%8]);
     }
     static long DAndAntiDMoves(int s){
+        //REMINDER: requires OCCUPIED to be up to date
         long binaryS = 1L<<s;
         long possibilitiesDiagonal = ((OCCUPIED&DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilitiesAntiDiagonal = ((OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
         return (possibilitiesDiagonal&DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
     }
     public static String posibleMovesW(String history,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK) {
-        NOT_WHITE_PIECES=~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
-        BLACK_PIECES=BP|BN|BB|BR|BQ;//omitted BK to avoid illegal capture
+        NOT_MY_PIECES =~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
+        MY_PIECES=WP|WN|WB|WR|WQ;//omitted WK to avoid illegal capture
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
         EMPTY=~OCCUPIED;
-//        timeExperiment(WP);
         String list = possibleWP(history,WP,BP)+
                 possibleWN(OCCUPIED,WN)+
                 possibleWB(OCCUPIED,WB)+
@@ -70,7 +71,7 @@ public class Moves {
     public static String possibleWP(String history,long WP,long BP){
         String list = "";
         //x1,y1,x2,y2
-        long PAWN_MOVES = (WP>>7)&BLACK_PIECES&~RANK_8&~FILE_A;//capture right
+        long PAWN_MOVES = (WP>>7)&NOT_MY_PIECES&OCCUPIED&~RANK_8&~FILE_A;//capture right
         long possibility = PAWN_MOVES&~(PAWN_MOVES-1);
         while(possibility!=0){
             int index = Long.numberOfTrailingZeros(possibility);
@@ -78,7 +79,7 @@ public class Moves {
             PAWN_MOVES &=~possibility;
             possibility = PAWN_MOVES&~(PAWN_MOVES-1);
         }
-        PAWN_MOVES = (WP>>9)&BLACK_PIECES&~RANK_8&~FILE_H;//capture left
+        PAWN_MOVES = (WP>>9)&NOT_MY_PIECES&OCCUPIED&~RANK_8&~FILE_H;//capture left
         possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         while (possibility != 0)
         {
@@ -106,7 +107,7 @@ public class Moves {
             possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         //y1,y2.Promotion Type,"P"
-        PAWN_MOVES=(WP>>7)&BLACK_PIECES&RANK_8&~FILE_A;//Pawn promotion by right capture
+        PAWN_MOVES=(WP>>7)&NOT_MY_PIECES&OCCUPIED&RANK_8&~FILE_A;//Pawn promotion by right capture
         possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         while (possibility != 0)
         {
@@ -115,7 +116,7 @@ public class Moves {
             PAWN_MOVES&=~possibility;
             possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
-        PAWN_MOVES=(WP>>9)&BLACK_PIECES&RANK_8&~FILE_H;//pawn promotion by capture left
+        PAWN_MOVES=(WP>>9)&NOT_MY_PIECES&OCCUPIED&RANK_8&~FILE_H;//pawn promotion by capture left
         possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         while (possibility != 0)
         {
@@ -133,22 +134,103 @@ public class Moves {
             PAWN_MOVES&=~possibility;
             possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
-        //y1,y2,Space,"E
+        //y1,y2,"WE"
         //en passant
-        if(history.length()>=4){    //1636
+        if(history.length()>=4){
             if((history.charAt(history.length()-1)==history.charAt(history.length()-3)) && Math.abs(history.charAt(history.length()-2)-history.charAt(history.length()-4))==2){
                 int eFile = history.charAt(history.length()-1)-'0';
                 //en passant right
                 possibility = (WP<<1)&BP&RANK_5&~FILE_A&FileMasks8[eFile];//shows piece to remove, not destination
                 if(possibility!=0){
                     int index =Long.numberOfTrailingZeros(possibility);
-                    list+=""+(index%8-1)+(index%8)+" E";
+                    list+=""+(index%8-1)+(index%8)+"WE";
                 }
                 //en passant left
                 possibility=(WP>>1)&BP&RANK_5&~FILE_H&FileMasks8[eFile];//shows piece to remove, not the destination
                 if(possibility!=0){
                     int index = Long.numberOfTrailingZeros(possibility);
-                    list+=""+(index%8+1) +(index%8)+" E";
+                    list+=""+(index%8+1) +(index%8)+"WE";
+                }
+            }
+        }
+        return list;
+    }
+    public static String possibleBP(String history,long BP,long WP){
+        String list ="";
+        //x1,y1.x2.y2
+        long PAWN_MOVES=(BP<<7)&NOT_MY_PIECES&OCCUPIED&~RANK_1&~FILE_H;//capture right
+        long possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8-1)+(index%8+1)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        PAWN_MOVES=(BP<<9)&NOT_MY_PIECES&OCCUPIED&~RANK_1&~FILE_A;//capture left
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8-1)+(index%8-1)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        PAWN_MOVES=(BP<<8)&EMPTY&~RANK_1;//move 1 forward
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index/8-1)+(index%8)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        PAWN_MOVES=(BP<<16)&EMPTY&(EMPTY<<8)&RANK_5;//move 2 forward
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+= ""+(index/8-2)+(index&8)+(index/8)+(index%8);
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        //y1,y2,Promotion Type,"P"
+        PAWN_MOVES=(BP<<7)&NOT_MY_PIECES&OCCUPIED&RANK_1&~FILE_H;//pawn promotion by capture right
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8+1)+(index%8)+"qP"+(index%8+1)+(index%8)+"rP"+(index%8+1)+(index%8)+"bP"+(index%8+1)+(index%8)+"nP";
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        PAWN_MOVES=(BP<<9)&NOT_MY_PIECES&OCCUPIED&RANK_1&~FILE_A;
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8-1)+(index%8)+"qP"+(index%8-1)+(index%8)+"rP"+(index%8-1)+(index%8)+"bP"+(index%8-1)+(index%8)+"nP";
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        PAWN_MOVES=(BP<<8)&EMPTY&RANK_1;//pawn promotion by move 1 forward
+        possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        while(possibility!=0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8)+(index%8)+"qP"+(index%8)+(index%8)+"rP"+(index%8)+(index%8)+"bP"+(index%8)+(index%8)+"nP";
+            PAWN_MOVES&=~possibility;
+            possibility=PAWN_MOVES&~(PAWN_MOVES-1);
+        }
+        //en passant
+        //y1,y2,"BE"
+        if(history.length()>=4){
+            if((history.charAt(history.length()-1)==history.charAt(history.length()-3)) && Math.abs(history.charAt(history.length()-2)-history.charAt(history.length()-4))==2){
+                int eFile = history.charAt(history.length()-1)-'0';
+                //en passant right
+                possibility = (BP>>1)&WP&RANK_4&~FILE_H&FileMasks8[eFile];//shows pieces to remove, not the destination
+                if(possibility !=0){
+                    int index = Long.numberOfTrailingZeros(possibility);
+                    list+=""+(index%8+1)+(index%8)+"BE";
+                }
+                //en passant left
+                possibility = (BP<<1)&WP&RANK_4&~FILE_A&FileMasks8[eFile];//shows piece to remove, not the destination
+                if(possibility!=0){
+                    int index = Long.numberOfTrailingZeros(possibility);
+                    list+=""+(index%8-1)+(index%8)+"BE";
                 }
             }
         }
@@ -158,7 +240,7 @@ public class Moves {
         String list="";
         long i=WN&~(WN-1);
         long possibility;
-        while(i!=0){
+        while(i!=0){ 
             int iLocation = Long.numberOfTrailingZeros(i);
             if(iLocation>18){
                 possibility=KNIGHT_SPAN<<(iLocation-18);
@@ -166,9 +248,9 @@ public class Moves {
                 possibility=KNIGHT_SPAN>>(18-iLocation);
             }
             if(iLocation%8<4){
-                possibility&=~FILE_GH&NOT_WHITE_PIECES;
+                possibility&=~FILE_GH& NOT_MY_PIECES;
             }else{
-                possibility&=~FILE_AB&NOT_WHITE_PIECES;
+                possibility&=~FILE_AB& NOT_MY_PIECES;
             }
             long j = possibility&~(possibility-1);
             while(j!=0){
@@ -188,7 +270,7 @@ public class Moves {
         long possibility;
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
-            possibility=DAndAntiDMoves(iLocation)&NOT_WHITE_PIECES;
+            possibility=DAndAntiDMoves(iLocation)& NOT_MY_PIECES;
             long j=possibility&~(possibility-1);
             while(j!=0){
                 int index = Long.numberOfTrailingZeros(j);
@@ -207,7 +289,7 @@ public class Moves {
         long possibility;
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
-            possibility=HAndVMoves(iLocation)&NOT_WHITE_PIECES;
+            possibility=HAndVMoves(iLocation)& NOT_MY_PIECES;
             long j=possibility&~(possibility-1);
             while(j!=0){
                 int index = Long.numberOfTrailingZeros(j);
@@ -226,7 +308,7 @@ public class Moves {
         long possibility;
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
-            possibility = (HAndVMoves(iLocation)|DAndAntiDMoves(iLocation)) & NOT_WHITE_PIECES;
+            possibility = (HAndVMoves(iLocation)|DAndAntiDMoves(iLocation)) & NOT_MY_PIECES;
             long j = possibility&~(possibility-1);
             while(j!=0){
                 int index = Long.numberOfTrailingZeros(j);
@@ -249,9 +331,9 @@ public class Moves {
             possibility=KING_SPAN>>(9-iLocation);
         }
         if(iLocation%8<4){
-            possibility&=~FILE_GH&NOT_WHITE_PIECES;
+            possibility&=~FILE_GH& NOT_MY_PIECES;
         }else{
-            possibility&=~FILE_AB&NOT_WHITE_PIECES;
+            possibility&=~FILE_AB& NOT_MY_PIECES;
         }
         long j=possibility&~(possibility-1);
         while(j!=0){
