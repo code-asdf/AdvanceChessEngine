@@ -60,12 +60,24 @@ public class Moves {
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
         EMPTY=~OCCUPIED;
         String list = possibleWP(history,WP,BP)+
-                possibleWN(OCCUPIED,WN)+
-                possibleWB(OCCUPIED,WB)+
-                possibleWR(OCCUPIED,WR)+
-                possibleWQ(OCCUPIED,WQ)+
-                possibleWK(OCCUPIED,WK);
-        unsafeForBlack(WP, WN, WB, WR, WQ, WK, BP, BN, BB, BR, BQ, BK);
+                possibleN(OCCUPIED,WN)+
+                possibleB(OCCUPIED,WB)+
+                possibleR(OCCUPIED,WR)+
+                possibleQ(OCCUPIED,WQ)+
+                possibleK(OCCUPIED,WK);
+        return list;
+    }
+    public static String possibleMovesB(String history,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK) {
+        NOT_MY_PIECES=~(BP|BN|BB|BR|BQ|BK|WK);//added WK to avoid illegal capture
+        MY_PIECES=BP|BN|BB|BR|BQ;//omitted BK to avoid illegal capture
+        OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
+        EMPTY=~OCCUPIED;
+        String list=possibleBP(history,BP,WP)+
+                possibleN(OCCUPIED,BN)+
+                possibleB(OCCUPIED,BB)+
+                possibleR(OCCUPIED,BR)+
+                possibleQ(OCCUPIED,BQ)+
+                possibleK(OCCUPIED,BK);
         return list;
     }
     public static String possibleWP(String history,long WP,long BP){
@@ -236,11 +248,11 @@ public class Moves {
         }
         return list;
     }
-    public static String possibleWN(long OCCUPIED,long WN){
+    public static String possibleN(long OCCUPIED,long N){
         String list="";
-        long i=WN&~(WN-1);
+        long i=N&~(N-1);
         long possibility;
-        while(i!=0){ 
+        while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
             if(iLocation>18){
                 possibility=KNIGHT_SPAN<<(iLocation-18);
@@ -259,14 +271,14 @@ public class Moves {
                 possibility&=~j ;
                 j=possibility&~(possibility-1);
             }
-            WN&=~i;
-            i=WN&~(WN-1);
+            N&=~i;
+            i=N&~(N-1);
         }
         return list;
     }
-    public static String possibleWB(long OCCUPIED,long WB){
+    public static String possibleB(long OCCUPIED,long B){
         String list = "";
-        long i=WB&~(WB-1);
+        long i=B&~(B-1);
         long possibility;
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
@@ -278,14 +290,14 @@ public class Moves {
                 possibility&=~j;
                 j=possibility&~(possibility-1);
             }
-            WB&=~i;
-            i=WB&~(WB-1);
+            B&=~i;
+            i=B&~(B-1);
         }
         return list;
     }
-    public static String possibleWR(long OCCUPIED,long WR){
+    public static String possibleR(long OCCUPIED,long R){
         String list="";
-        long i=WR&~(WR-1);
+        long i=R&~(R-1);
         long possibility;
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
@@ -297,14 +309,14 @@ public class Moves {
                 possibility&=~possibility;
                 j=possibility&~(possibility-1);
             }
-            WR&=~i;
-            i=WR&~(WR-1);
+            R&=~i;
+            i=R&~(R-1);
         }
         return list;
     }
-    public static String possibleWQ(long OCCUPIED,long WQ){
+    public static String possibleQ(long OCCUPIED,long Q){
         String list ="";
-        long i = WQ&~(WQ-1);
+        long i = Q&~(Q-1);
         long possibility;
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
@@ -316,15 +328,15 @@ public class Moves {
                 possibility&=~j;
                 j=possibility&~(possibility-1);
             }
-            WQ&=~i;
-            i=WQ&~(WQ-1);
+            Q&=~i;
+            i=Q&~(Q-1);
         }
         return list;
     }
-    public static String possibleWK(long OCCUPIED,long WK){
+    public static String possibleK(long OCCUPIED,long K){
         String list="";
         long possibility;
-        int iLocation = Long.numberOfTrailingZeros(WK);
+        int iLocation = Long.numberOfTrailingZeros(K);
         if(iLocation>9){
             possibility=KNIGHT_SPAN<<(iLocation-9);
         }else{
@@ -402,8 +414,6 @@ public class Moves {
             possibility&=~FILE_AB;
         }
         unsafe|=possibility;
-        System.out.println();
-        drawBitboard(unsafe);
         return unsafe;
     }
     public static void drawBitboard(long bitBoard){
