@@ -54,12 +54,12 @@ public class Moves {
         long possibilitiesAntiDiagonal = ((OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
         return (possibilitiesDiagonal&DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
     }
-    public static String posibleMovesW(String history,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK) {
+    public static String posibleMovesW(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
         NOT_MY_PIECES =~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
         MY_PIECES=WP|WN|WB|WR|WQ;//omitted WK to avoid illegal capture
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
         EMPTY=~OCCUPIED;
-        String list = possibleWP(history,WP,BP)+
+        String list = possibleWP(WP,BP,EP)+
                 possibleN(OCCUPIED,WN)+
                 possibleB(OCCUPIED,WB)+
                 possibleR(OCCUPIED,WR)+
@@ -67,12 +67,12 @@ public class Moves {
                 possibleK(OCCUPIED,WK);
         return list;
     }
-    public static String possibleMovesB(String history,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK) {
+    public static String possibleMovesB(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
         NOT_MY_PIECES=~(BP|BN|BB|BR|BQ|BK|WK);//added WK to avoid illegal capture
         MY_PIECES=BP|BN|BB|BR|BQ;//omitted BK to avoid illegal capture
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
         EMPTY=~OCCUPIED;
-        String list=possibleBP(history,BP,WP)+
+        String list=possibleBP(BP,WP,EP)+
                 possibleN(OCCUPIED,BN)+
                 possibleB(OCCUPIED,BB)+
                 possibleR(OCCUPIED,BR)+
@@ -80,7 +80,7 @@ public class Moves {
                 possibleK(OCCUPIED,BK);
         return list;
     }
-    public static String possibleWP(String history,long WP,long BP){
+    public static String possibleWP(long WP,long BP,long EP){
         String list = "";
         //x1,y1,x2,y2
         long PAWN_MOVES = (WP>>7)&NOT_MY_PIECES&OCCUPIED&~RANK_8&~FILE_A;//capture right
@@ -147,27 +147,21 @@ public class Moves {
             possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
         //y1,y2,"WE"
-        //en passant
-        if(history.length()>=4){
-            if((history.charAt(history.length()-1)==history.charAt(history.length()-3)) && Math.abs(history.charAt(history.length()-2)-history.charAt(history.length()-4))==2){
-                int eFile = history.charAt(history.length()-1)-'0';
-                //en passant right
-                possibility = (WP<<1)&BP&RANK_5&~FILE_A&FileMasks8[eFile];//shows piece to remove, not destination
-                if(possibility!=0){
-                    int index =Long.numberOfTrailingZeros(possibility);
-                    list+=""+(index%8-1)+(index%8)+"WE";
-                }
-                //en passant left
-                possibility=(WP>>1)&BP&RANK_5&~FILE_H&FileMasks8[eFile];//shows piece to remove, not the destination
-                if(possibility!=0){
-                    int index = Long.numberOfTrailingZeros(possibility);
-                    list+=""+(index%8+1) +(index%8)+"WE";
-                }
-            }
+        //en passant right
+        possibility = (WP<<1)&BP&RANK_5&~FILE_A&EP;//shows piece to remove , not the destination
+        if(possibility != 0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8-1)+(index%8)+"WE";
+        }
+        //en passant left
+        possibility = (WP >> 1)&BP&RANK_5&~FILE_H&EP;//shows piece to remove , not the destination
+        if(possibility != 0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8+1)+(index%8)+"WE";
         }
         return list;
     }
-    public static String possibleBP(String history,long BP,long WP){
+    public static String possibleBP(long BP,long WP,long EP){
         String list ="";
         //x1,y1.x2.y2
         long PAWN_MOVES=(BP<<7)&NOT_MY_PIECES&OCCUPIED&~RANK_1&~FILE_H;//capture right
@@ -229,22 +223,17 @@ public class Moves {
         }
         //en passant
         //y1,y2,"BE"
-        if(history.length()>=4){
-            if((history.charAt(history.length()-1)==history.charAt(history.length()-3)) && Math.abs(history.charAt(history.length()-2)-history.charAt(history.length()-4))==2){
-                int eFile = history.charAt(history.length()-1)-'0';
-                //en passant right
-                possibility = (BP>>1)&WP&RANK_4&~FILE_H&FileMasks8[eFile];//shows pieces to remove, not the destination
-                if(possibility !=0){
-                    int index = Long.numberOfTrailingZeros(possibility);
-                    list+=""+(index%8+1)+(index%8)+"BE";
-                }
-                //en passant left
-                possibility = (BP<<1)&WP&RANK_4&~FILE_A&FileMasks8[eFile];//shows piece to remove, not the destination
-                if(possibility!=0){
-                    int index = Long.numberOfTrailingZeros(possibility);
-                    list+=""+(index%8-1)+(index%8)+"BE";
-                }
-            }
+        //en passant right
+        possibility = (BP>>1)&WP&RANK_4&~FILE_H&EP;//shows piece to remove, not the destination
+        if(possibility != 0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8+1)+(index%8)+"BE";
+        }
+        //en passant left
+        possibility = (BP<<1)&WP&RANK_4&~FILE_A&EP;///shows piece to remove, not the destination
+        if(possibility != 0){
+            int index = Long.numberOfTrailingZeros(possibility);
+            list+=""+(index%8-1)+(index%8)+"BE";
         }
         return list;
     }
@@ -333,7 +322,7 @@ public class Moves {
         }
         return list;
     }
-    public static String possibleK(long OCCUPIED,long K){
+    public static String possibleK(long OCCUPIED,long K) {
         String list="";
         long possibility;
         int iLocation = Long.numberOfTrailingZeros(K);
