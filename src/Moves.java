@@ -19,6 +19,7 @@ public class Moves {
     static long MY_PIECES;
     static long OCCUPIED;
     static long EMPTY;
+    static long CASTLE_ROOKS[]={63,56,7,0};
     static long RankMasks8[] =/*from rank1 to rank8*/
             {
                     0xFFL, 0xFF00L, 0xFF0000L, 0xFF000000L, 0xFF00000000L, 0xFF0000000000L, 0xFF000000000000L, 0xFF00000000000000L
@@ -64,7 +65,8 @@ public class Moves {
                 possibleB(OCCUPIED,WB)+
                 possibleR(OCCUPIED,WR)+
                 possibleQ(OCCUPIED,WQ)+
-                possibleK(OCCUPIED,WK);
+                possibleK(OCCUPIED,WK)+
+                possibleCW(WR,CWK,CWQ);
         return list;
     }
     public static String possibleMovesB(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
@@ -77,7 +79,8 @@ public class Moves {
                 possibleB(OCCUPIED,BB)+
                 possibleR(OCCUPIED,BR)+
                 possibleQ(OCCUPIED,BQ)+
-                possibleK(OCCUPIED,BK);
+                possibleK(OCCUPIED,BK)+
+                possibleCB(BR,CBK,CBQ);
         return list;
     }
     public static String possibleWP(long WP,long BP,long EP){
@@ -342,6 +345,26 @@ public class Moves {
             list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
             possibility&=~j;
             j=possibility&~(possibility-1);
+        }
+        return list;
+    }
+    public static String possibleCW(long WR,boolean CWK,boolean CWQ){
+        String list = "";
+        if(CWK && (((1L<<CASTLE_ROOKS[0])&WR)!=0)){
+            list+="7476";
+        }
+        if(CWQ && (((1L<<CASTLE_ROOKS[1])&WR)!=0)){
+            list+="7472";
+        }
+        return list;
+    }
+    public static String possibleCB(long BR,boolean CBK,boolean CBQ){
+        String list = "";
+        if(CBK && (((1L<<CASTLE_ROOKS[2])&BR)!=0)){
+            list+="0406";
+        }
+        if(CBQ && (((CASTLE_ROOKS[3])&BR)!=0)){
+            list+="0402";
         }
         return list;
     }
