@@ -57,7 +57,7 @@ public class Moves {
     }
 
     public static void makeMoveWrong(String move,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
-        //can not opperate on a single board since moves are not backwards compatable
+        //can not operate on a single board since moves are not backwards compatable
         EP=0;
         if (Character.isDigit(move.charAt(3))) {
             int start=(Character.getNumericValue(move.charAt(0))*8)+(Character.getNumericValue(move.charAt(1)));
@@ -274,7 +274,7 @@ public class Moves {
         return 0;
     }
 
-    public static String posibleMovesW(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
+    public static String possibleMovesW(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
         NOT_MY_PIECES =~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
         MY_PIECES=WP|WN|WB|WR|WQ;//omitted WK to avoid illegal capture
         OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
@@ -645,6 +645,78 @@ public class Moves {
             possibility&=~FILE_AB;
         }
         unsafe|=possibility;
+        return unsafe;
+    }
+    public static long unsafeForWhite(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK){
+        long unsafe;
+        OCCUPIED=WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK;
+        //pawn
+        unsafe = ((BP<<7)&~FILE_H);//pawn capture right
+        unsafe|= ((BP<<9)&~FILE_A);//pawn capture left
+
+        long possibility;
+        //knight
+        long i=BN&(BN-1);
+        while(i !=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            if(iLocation>18){
+                possibility=KNIGHT_SPAN<<(iLocation-18);
+            }else{
+                possibility = KNIGHT_SPAN>>(18-iLocation);
+            }
+
+            if(iLocation%8<4){
+                possibility&=~FILE_GH;
+            }else{
+                possibility&=~FILE_AB;
+            }
+
+            unsafe |= possibility;
+            BN&=~i;
+            i=BN&(BN-1);
+        }
+
+        //bishop/queen
+
+        long QB = BQ|BB;
+        i = QB&(QB-1);
+        while(i!=0){
+            int iLocation = Long.numberOfTrailingZeros(i);
+            possibility = DAndAntiDMoves(iLocation);
+            unsafe |= possibility;
+            QB&=~i;
+            i = QB&~(QB-1);
+        }
+
+        //rook/queen
+        long QR=BQ|BR;
+        i=QR&~(QR-1);
+        while(i != 0)
+        {
+            int iLocation=Long.numberOfTrailingZeros(i);
+            possibility=HAndVMoves(iLocation);
+            unsafe |= possibility;
+            QR&=~i;
+            i=QR&~(QR-1);
+        }
+
+        //king
+        int iLocation=Long.numberOfTrailingZeros(BK);
+        if (iLocation>9)
+        {
+            possibility=KING_SPAN<<(iLocation-9);
+        }
+        else {
+            possibility=KING_SPAN>>(9-iLocation);
+        }
+        if (iLocation%8<4)
+        {
+            possibility &=~FILE_GH;
+        }
+        else {
+            possibility &=~FILE_AB;
+        }
+        unsafe |= possibility;
         return unsafe;
     }
     public static void drawBitboard(long bitBoard){

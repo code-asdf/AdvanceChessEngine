@@ -3,7 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 public class UserInterface extends JPanel {
     static long WP=0L,WN=0L,WB=0L,WR=0L,WQ=0L,WK=0L,BP=0L,BN=0L,BB=0L,BR=0L,BQ=0L,BK=0L,EP=0L;
-    static boolean CWK=true,CWQ=true,CBK=true,CBQ=true;//true=castle is possible
+    static boolean CWK=true,CWQ=true,CBK=true,CBQ=true,whiteToMove=true;//true=castle is possible
     static long UniversalWP=0L,UniversalWN=0L,UniversalWB=0L,UniversalWR=0L,UniversalWQ=0L,UniversalWK=0L,UniversalBP=0L,UniversalBN=0L,UniversalBB=0L,UniversalBR=0L,UniversalBQ=0L,UniversalBK=0L,UniversalEP=0L;
     static boolean UniversalCastleWK=true,UniversalCastleWQ=true,UniversalCastleBK=true,UniversalCastleBQ=true;//true=castle is possible
     static int humanIsWhite=1;
@@ -88,6 +88,8 @@ public class UserInterface extends JPanel {
     }
     public static void newGame() {
         BoardGeneration.initiateStandardChess();
-        Moves.posibleMovesW(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ);
+        CWK=true; CWQ = true; CBK=true; CBQ=true;
+        EP=0;
+        Moves.possibleMovesW(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ);
     }
 }
