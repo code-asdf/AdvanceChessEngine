@@ -1,0 +1,103 @@
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 (starting position)
+
+Depth       1
+Nodes       20
+Captures    0
+En Passant  0
+Castles     0
+Promotions  0
+Checks      0
+Checkmates  0
+
+Depth       2
+Nodes       400
+Captures    0
+En Passant  0
+Castles     0
+Promotions  0
+Checks      0
+Checkmates  0
+
+Depth       3
+Nodes       8,902
+Captures    34
+En Passant  0
+Castles     0
+Promotions  0
+Checks      12
+Checkmates  0
+
+Depth       4
+Nodes       197,281
+Captures    1576
+En Passant  0
+Castles     0
+Promotions  0
+Checks      469
+Checkmates  8
+
+Depth       5
+Nodes       4,865,609
+Captures    82719
+En Passant  258
+Castles     0
+Promotions  0
+Checks      27351
+Checkmates  347
+
+Depth       6
+Nodes       119,060,324
+Captures    2812008
+En Passant  5248
+Castles     0
+Promotions  0
+Checks      809099
+Checkmates  10828
+
+
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -
+
+Depth       1
+Nodes       48
+Captures    8
+En Passant  0
+Castles     2
+Promotions  0
+Checks      0
+Checkmates  0
+
+Depth       2
+Nodes       2039
+Captures    351
+En Passant  1
+Castles     91
+Promotions  0
+Checks      3
+Checkmates  0
+
+Depth       3
+Nodes       97862
+Captures    17102
+En Passant  45
+Castles     3162
+Promotions  0
+Checks      993
+Checkmates  1
+
+Depth       4
+Nodes       4085603
+Captures    757163
+En Passant  1929
+Castles     128013
+Promotions  15172
+Checks      25523
+Checkmates  43
+
+Depth       5
+Nodes       193690690
+Captures    35043416
+En Passant  73365
+Castles     4993637
+Promotions  8392
+Checks      3309887
+Checkmates  30171
