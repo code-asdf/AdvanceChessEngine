@@ -20,7 +20,7 @@ public class UserInterface extends JPanel {
                 (Toolkit.getDefaultToolkit().getScreenSize().height-javaF.getHeight())/2);
         javaF.setVisible(true);
 //        newGame();
-        BoardGeneration.importFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        BoardGeneration.importFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
 //        BoardGeneration.initiateStandardChess();
         BoardGeneration.drawArray(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
         Perft.perftRoot(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ,WhiteToMove,0);

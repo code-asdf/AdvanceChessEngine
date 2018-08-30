@@ -283,7 +283,7 @@ public class Moves {
                 possibleR(OCCUPIED,WR)+
                 possibleQ(OCCUPIED,WQ)+
                 possibleK(OCCUPIED,WK)+
-                possibleCW(WR,CWK,CWQ);
+                possibleCW(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,CWK,CWQ);
         return list;
     }
     public static String possibleMovesB(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
@@ -297,7 +297,7 @@ public class Moves {
                 possibleR(OCCUPIED,BR)+
                 possibleQ(OCCUPIED,BQ)+
                 possibleK(OCCUPIED,BK)+
-                possibleCB(BR,CBK,CBQ);
+                possibleCB(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,CBK,CBQ);
         return list;
     }
     public static String possibleWP(long WP,long BP,long EP){
@@ -383,7 +383,7 @@ public class Moves {
     }
     public static String possibleBP(long BP,long WP,long EP){
         String list ="";
-        //x1,y1.x2.y2
+        //x1,y1,x2,y2
         long PAWN_MOVES=(BP<<7)&NOT_MY_PIECES&OCCUPIED&~RANK_1&~FILE_H;//capture right
         long possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         while(possibility!=0){
@@ -412,7 +412,7 @@ public class Moves {
         possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         while(possibility!=0){
             int index = Long.numberOfTrailingZeros(possibility);
-            list+= ""+(index/8-2)+(index&8)+(index/8)+(index%8);
+            list+= ""+(index/8-2)+(index%8)+(index/8)+(index%8);
             PAWN_MOVES&=~possibility;
             possibility=PAWN_MOVES&~(PAWN_MOVES-1);
         }
@@ -523,6 +523,7 @@ public class Moves {
         }
         return list;
     }
+
     public static String possibleQ(long OCCUPIED,long Q){
         String list ="";
         long i = Q&~(Q-1);
@@ -565,30 +566,40 @@ public class Moves {
         }
         return list;
     }
-    public static String possibleCW(long WR,boolean CWK,boolean CWQ){
-        String list = "";
-        if(CWK && (((1L<<CASTLE_ROOKS[0])&WR)!=0)){
-            if ((OCCUPIED&((1L<<61)|(1L<<62)))==0) {
-                list+="7476";
+    public static String possibleCW(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,boolean CWK,boolean CWQ) {
+        String list="";
+        long UNSAFE=unsafeForWhite(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
+        if ((UNSAFE&WK)==0) {
+            if (CWK&&(((1L<<CASTLE_ROOKS[0])&WR)!=0))
+            {
+                if (((OCCUPIED|UNSAFE)&((1L<<61)|(1L<<62)))==0) {
+                    list+="7476";
+                }
             }
-        }
-        if(CWQ && (((1L<<CASTLE_ROOKS[1])&WR)!=0)){
-            if ((OCCUPIED&((1L<<57)|(1L<<58)|(1L<<59)))==0) {
-                list+="7472";
+            if (CWQ&&(((1L<<CASTLE_ROOKS[1])&WR)!=0))
+            {
+                if (((OCCUPIED|(UNSAFE&~(1L<<57)))&((1L<<57)|(1L<<58)|(1L<<59)))==0) {
+                    list+="7472";
+                }
             }
         }
         return list;
     }
-    public static String possibleCB(long BR,boolean CBK,boolean CBQ){
-        String list = "";
-        if(CBK && (((1L<<CASTLE_ROOKS[2])&BR)!=0)){
-            if ((OCCUPIED&((1L<<5)|(1L<<6)))==0) {
-                list+="0406";
+    public static String possibleCB(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,boolean CBK,boolean CBQ) {
+        String list="";
+        long UNSAFE=unsafeForBlack(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
+        if ((UNSAFE&BK)==0) {
+            if (CBK&&(((1L<<CASTLE_ROOKS[2])&BR)!=0))
+            {
+                if (((OCCUPIED|UNSAFE)&((1L<<5)|(1L<<6)))==0) {
+                    list+="0406";
+                }
             }
-        }
-        if(CBQ && (((CASTLE_ROOKS[3])&BR)!=0)){
-            if ((OCCUPIED&((1L<<1)|(1L<<2)|(1L<<3)))==0) {
-                list+="0402";
+            if (CBQ&&(((1L<<CASTLE_ROOKS[3])&BR)!=0))
+            {
+                if (((OCCUPIED|(UNSAFE&~(1L<<1)))&((1L<<1)|(1L<<2)|(1L<<3)))==0) {
+                    list+="0402";
+                }
             }
         }
         return list;
@@ -685,7 +696,7 @@ public class Moves {
         //bishop/queen
 
         long QB = BQ|BB;
-        i = QB&(QB-1);
+        i = QB&~(QB-1);
         while(i!=0){
             int iLocation = Long.numberOfTrailingZeros(i);
             possibility = DAndAntiDMoves(iLocation);

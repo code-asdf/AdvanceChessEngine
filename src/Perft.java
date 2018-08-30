@@ -10,7 +10,7 @@ public class Perft {
     }
     static int perftTotalMoveCounter=0;
     static int perftMoveCounter=0;
-    static int perftMaxDepth=4;
+    static int perftMaxDepth=2;
     public static void perftRoot(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ,boolean WhiteToMove,int depth)
     {
         String moves;
@@ -67,11 +67,11 @@ public class Perft {
                 if (Character.isDigit(moves.charAt(3))) {//'regular' move
                     int start=(Character.getNumericValue(moves.charAt(i))*8)+(Character.getNumericValue(moves.charAt(i+1)));
                     if (((1L<<start)&WK)!=0) {CWKt=false; CWQt=false;}
-                    if (((1L<<start)&BK)!=0) {CBKt=false; CBQt=false;}
-                    if (((1L<<start)&WR&(1L<<63))!=0) {CWKt=false;}
-                    if (((1L<<start)&WR&(1L<<56))!=0) {CWQt=false;}
-                    if (((1L<<start)&BR&(1L<<7))!=0) {CBKt=false;}
-                    if (((1L<<start)&BR&1L)!=0) {CBQt=false;}
+                    else if (((1L<<start)&BK)!=0) {CBKt=false; CBQt=false;}
+                    else if (((1L<<start)&WR&(1L<<63))!=0) {CWKt=false;}
+                    else if (((1L<<start)&WR&(1L<<56))!=0) {CWQt=false;}
+                    else if (((1L<<start)&BR&(1L<<7))!=0) {CBKt=false;}
+                    else if (((1L<<start)&BR&1L)!=0) {CBQt=false;}
                 }
                 if (((WKt&Moves.unsafeForWhite(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && WhiteToMove) ||
                         ((BKt&Moves.unsafeForBlack(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && !WhiteToMove)) {
