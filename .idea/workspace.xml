@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b983eff0-7d4e-49a5-b217-dc0688547091" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/Moves.java" afterPath="$PROJECT_DIR$/src/Moves.java" />
       <change beforePath="$PROJECT_DIR$/src/Perft.java" afterPath="$PROJECT_DIR$/src/Perft.java" />
     </list>
@@ -29,11 +30,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Perft.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Perft.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Perft.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="12" column="30" lean-forward="false" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
+            <state relative-caret-position="288">
+              <caret line="79" column="72" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -49,11 +50,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Moves.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Moves.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Moves.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="299" column="14" lean-forward="false" selection-start-line="299" selection-start-column="14" selection-end-line="299" selection-end-column="14" />
+            <state relative-caret-position="78">
+              <caret line="521" column="19" lean-forward="false" selection-start-line="521" selection-start-column="19" selection-end-line="521" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -84,8 +85,8 @@
       <file leaf-file-name="Perft Data.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Perft Data.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="79" column="17" lean-forward="true" selection-start-line="79" selection-start-column="17" selection-end-line="79" selection-end-column="17" />
+            <state relative-caret-position="49">
+              <caret line="96" column="21" lean-forward="false" selection-start-line="96" selection-start-column="12" selection-end-line="96" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -121,8 +122,8 @@
         <option value="$PROJECT_DIR$/src/BoardGeneration.java" />
         <option value="$PROJECT_DIR$/src/UserInterface.java" />
         <option value="$PROJECT_DIR$/src/Perft Data.txt" />
-        <option value="$PROJECT_DIR$/src/Moves.java" />
         <option value="$PROJECT_DIR$/src/Perft.java" />
+        <option value="$PROJECT_DIR$/src/Moves.java" />
       </list>
     </option>
   </component>
@@ -132,7 +133,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="4">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="711" />
     <option name="y" value="24" />
     <option name="width" value="655" />
@@ -347,15 +348,15 @@
       <workItem from="1527618896907" duration="6616000" />
       <workItem from="1528514734397" duration="2473000" />
       <workItem from="1535340536356" duration="681000" />
-      <workItem from="1535447563501" duration="26718000" />
+      <workItem from="1535447563501" duration="32303000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135399000" />
+    <option name="totallyTimeSpent" value="140984000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="711" y="24" width="655" height="744" extended-state="4" />
+    <frame x="57" y="-4" width="1309" height="772" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -367,8 +368,8 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32949308" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33658537" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31415242" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32192847" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31382114" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54679805" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
@@ -426,7 +427,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Moves.java</url>
-          <line>290</line>
+          <line>269</line>
           <properties />
           <option name="timeStamp" value="20" />
         </line-breakpoint>
@@ -857,26 +858,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Moves.java">
+    <entry file="file://$PROJECT_DIR$/src/Perft.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="299" column="14" lean-forward="false" selection-start-line="299" selection-start-column="14" selection-end-line="299" selection-end-column="14" />
+        <state relative-caret-position="288">
+          <caret line="79" column="72" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Perft Data.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="79" column="17" lean-forward="true" selection-start-line="79" selection-start-column="17" selection-end-line="79" selection-end-column="17" />
+        <state relative-caret-position="49">
+          <caret line="96" column="21" lean-forward="false" selection-start-line="96" selection-start-column="12" selection-end-line="96" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Perft.java">
+    <entry file="file://$PROJECT_DIR$/src/Moves.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" column="30" lean-forward="false" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
+        <state relative-caret-position="78">
+          <caret line="521" column="19" lean-forward="false" selection-start-line="521" selection-start-column="19" selection-end-line="521" selection-end-column="19" />
           <folding />
         </state>
       </provider>

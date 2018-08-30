@@ -10,7 +10,7 @@ public class Perft {
     }
     static int perftTotalMoveCounter=0;
     static int perftMoveCounter=0;
-    static int perftMaxDepth=4;
+    static int perftMaxDepth=5;
     public static void perftRoot(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ,boolean WhiteToMove,int depth)
     {
         String moves;
@@ -73,7 +73,7 @@ public class Perft {
                 WRt=Moves.makeMoveCastle(WRt, WK|BK, moves.substring(i,i+4), 'R');
                 BRt=Moves.makeMoveCastle(BRt, WK|BK, moves.substring(i,i+4), 'r');
                 boolean CWKt=CWK,CWQt=CWQ,CBKt=CBK,CBQt=CBQ;
-                if (Character.isDigit(moves.charAt(3))) {//'regular' move
+                if (Character.isDigit(moves.charAt(i+3))) {//'regular' move
                     int start=(Character.getNumericValue(moves.charAt(i))*8)+(Character.getNumericValue(moves.charAt(i+1)));
                     /*if (((1L<<start)&(WP|BP))!=0) {
                         if (Math.abs(moves.charAt(i)-moves.charAt(i+2))==2) {
