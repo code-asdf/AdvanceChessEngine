@@ -20,10 +20,19 @@ public class UserInterface extends JPanel {
                 (Toolkit.getDefaultToolkit().getScreenSize().height-javaF.getHeight())/2);
         javaF.setVisible(true);
 //        newGame();
-        BoardGeneration.initiateStandardChess();
+        BoardGeneration.importFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+//        BoardGeneration.initiateStandardChess();
         BoardGeneration.drawArray(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
-        Perft.perft(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ,WhiteToMove,0);
-        System.out.print(Perft.perftMoveCounter);
+        Perft.perftRoot(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ,WhiteToMove,0);
+        if (Perft.perftTotalMoveCounter==0) {
+            if (WhiteToMove) {
+                Perft.perftTotalMoveCounter=Moves.possibleMovesW(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ).length()/4;
+            } else {
+                Perft.perftTotalMoveCounter=Moves.possibleMovesB(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ).length()/4;
+            }
+        }
+        System.out.print("Total: "+Perft.perftTotalMoveCounter);
+
         javaF.repaint();
     }
     @Override

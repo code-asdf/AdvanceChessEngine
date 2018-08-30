@@ -41,16 +41,16 @@ public class Moves {
                     0x8040201008040201L, 0x4020100804020100L, 0x2010080402010000L, 0x1008040201000000L,
                     0x804020100000000L, 0x402010000000000L, 0x201000000000000L, 0x100000000000000L
             };
-    static long HAndVMoves(int s){
+    static long HAndVMoves(int s) {
         //REMINDER: requires OCCUPIED to be up to date
         long binaryS=1L<<s;
-        long possibilitiesHorizontal = (OCCUPIED-2*binaryS)^Long.reverse(Long.reverse(OCCUPIED)-2*Long.reverse(binaryS));
-        long possibilitiesVertical = ((OCCUPIED&FileMasks8[s%8])-(2*binaryS))^Long.reverse(Long.reverse(OCCUPIED&FileMasks8[s%8])-(2*Long.reverse(binaryS)));
-        return (possibilitiesHorizontal&RankMasks8[s/8]) |  (possibilitiesVertical&FileMasks8[s%8]);
+        long possibilitiesHorizontal = (OCCUPIED - 2 * binaryS) ^ Long.reverse(Long.reverse(OCCUPIED) - 2 * Long.reverse(binaryS));
+        long possibilitiesVertical = ((OCCUPIED&FileMasks8[s % 8]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&FileMasks8[s % 8]) - (2 * Long.reverse(binaryS)));
+        return (possibilitiesHorizontal&RankMasks8[s / 8]) | (possibilitiesVertical&FileMasks8[s % 8]);
     }
-    static long DAndAntiDMoves(int s){
+    static long DAndAntiDMoves(int s) {
         //REMINDER: requires OCCUPIED to be up to date
-        long binaryS = 1L<<s;
+        long binaryS=1L<<s;
         long possibilitiesDiagonal = ((OCCUPIED&DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilitiesAntiDiagonal = ((OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(OCCUPIED&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
         return (possibilitiesDiagonal&DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
@@ -263,7 +263,6 @@ public class Moves {
         }
         return board;
     }
-
     public static long makeMoveEP(long board,String move) {
         if (Character.isDigit(move.charAt(3))) {
             int start=(Character.getNumericValue(move.charAt(0))*8)+(Character.getNumericValue(move.charAt(1)));
@@ -273,7 +272,6 @@ public class Moves {
         }
         return 0;
     }
-
     public static String possibleMovesW(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ) {
         NOT_MY_PIECES =~(WP|WN|WB|WR|WQ|WK|BK);//added BK to avoid illegal capture
         MY_PIECES=WP|WN|WB|WR|WQ;//omitted WK to avoid illegal capture
@@ -471,9 +469,9 @@ public class Moves {
                 possibility=KNIGHT_SPAN>>(18-iLocation);
             }
             if(iLocation%8<4){
-                possibility&=~FILE_GH& NOT_MY_PIECES;
+                possibility&=~FILE_GH&NOT_MY_PIECES;
             }else{
-                possibility&=~FILE_AB& NOT_MY_PIECES;
+                possibility&=~FILE_AB&NOT_MY_PIECES;
             }
             long j = possibility&~(possibility-1);
             while(j!=0){
@@ -517,7 +515,7 @@ public class Moves {
             while(j!=0){
                 int index = Long.numberOfTrailingZeros(j);
                 list+=""+(iLocation/8)+(iLocation%8)+(index/8)+(index%8);
-                possibility&=~possibility;
+                possibility&=~j;
                 j=possibility&~(possibility-1);
             }
             R&=~i;
@@ -549,7 +547,7 @@ public class Moves {
         long possibility;
         int iLocation = Long.numberOfTrailingZeros(K);
         if(iLocation>9){
-            possibility=KNIGHT_SPAN<<(iLocation-9);
+            possibility=KING_SPAN<<(iLocation-9);
         }else{
             possibility=KING_SPAN>>(9-iLocation);
         }
@@ -570,20 +568,28 @@ public class Moves {
     public static String possibleCW(long WR,boolean CWK,boolean CWQ){
         String list = "";
         if(CWK && (((1L<<CASTLE_ROOKS[0])&WR)!=0)){
-            list+="7476";
+            if ((OCCUPIED&((1L<<61)|(1L<<62)))==0) {
+                list+="7476";
+            }
         }
         if(CWQ && (((1L<<CASTLE_ROOKS[1])&WR)!=0)){
-            list+="7472";
+            if ((OCCUPIED&((1L<<57)|(1L<<58)|(1L<<59)))==0) {
+                list+="7472";
+            }
         }
         return list;
     }
     public static String possibleCB(long BR,boolean CBK,boolean CBQ){
         String list = "";
         if(CBK && (((1L<<CASTLE_ROOKS[2])&BR)!=0)){
-            list+="0406";
+            if ((OCCUPIED&((1L<<5)|(1L<<6)))==0) {
+                list+="0406";
+            }
         }
         if(CBQ && (((CASTLE_ROOKS[3])&BR)!=0)){
-            list+="0402";
+            if ((OCCUPIED&((1L<<1)|(1L<<2)|(1L<<3)))==0) {
+                list+="0402";
+            }
         }
         return list;
     }
