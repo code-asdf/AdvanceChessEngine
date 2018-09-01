@@ -10,7 +10,7 @@ public class Perft {
     }
     static int perftTotalMoveCounter=0;
     static int perftMoveCounter=0;
-    static int perftMaxDepth=5;
+    static int perftMaxDepth=6;
     public static void perftRoot(long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ,boolean WhiteToMove,int depth)
     {
         String moves;
