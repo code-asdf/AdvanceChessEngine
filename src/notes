@@ -1,0 +1,7 @@
+1. make an user interface
+2. multi threading
+3. StringBuilder
+4. Check if the piece could be moved in the move method itself and not outside
+5. How much depth should i calculate till if i have say 'x' amount of time
+6. Iterative deepening
+7. Sort moves
