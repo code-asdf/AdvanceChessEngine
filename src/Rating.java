@@ -83,8 +83,6 @@ public class Rating {
         - score(!Orion.WhiteToMove,depth,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ);
     }
     private static int score(boolean player,int depth,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ){
-        long UNSAFE_FOR_WHITE = Moves.unsafeForWhite(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
-        long UNSAFE_FOR_BLACK = Moves.unsafeForBlack(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK);
         String move;
         if(player)
             move = Moves.possibleMovesW(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ);
@@ -93,13 +91,13 @@ public class Rating {
 
         return  mobility(player) +
                 kingThreats(player,depth) +
-                attacks(player,UNSAFE_FOR_WHITE,UNSAFE_FOR_BLACK,move,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ) +
+                attacks(player,move,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ) +
                 castle(player) +
                 pieceEvaluations(player) +
                 pawnStructure(player);
     }
 
-    private static int attacks(final boolean player,long UNSAFE_FOR_WHITE,long UNSAFE_FOR_BLACK,String moves,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ){
+    private static int attacks(final boolean player,String moves,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ){
         int attackScore = 0;
         for (int i=0;i<moves.length();i+=4) {
             long WPt = Moves.makeMove(WP, moves.substring(i, i + 4), 'P'), WNt = Moves.makeMove(WN, moves.substring(i, i + 4), 'N'),
@@ -130,8 +128,8 @@ public class Rating {
                     CBQt = false;
                 }
             }
-            if (((WKt&Moves.unsafeForWhite(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && true) ||
-                    ((BKt&Moves.unsafeForBlack(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && false)) {
+            if (((WKt&Moves.unsafeForWhite(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && player) ||
+                    ((BKt&Moves.unsafeForBlack(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && !player)) {
                 //legal move
             }
 
