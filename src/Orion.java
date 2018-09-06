@@ -6,12 +6,20 @@ public class Orion {
             UniversalBB=0L,UniversalBR=0L,UniversalBQ=0L,UniversalBK=0L,
             UniversalEP=0L;
     static int searchDepth=8,moveCounter;
-    static int MATE_SCORE=5000,NULL_INT=Integer.MIN_VALUE;
+    static int MATE_SCORE=10000,NULL_INT=Integer.MIN_VALUE;
     public static void main(String[] args) {
+        //Zobrist.random64();
+        //Zobrist.testDistribution();
+        Zobrist.zobristFillArray();
         BoardGeneration.importFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        //UCI.inputPrint();
-        //System.out.println(PrincipalVariation.pvSearch(-1000,1000,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ,!WhiteToMove,0));
-        //UCI.uciCommunication();
-        Zobrist.testDistribution();
+        UCI.inputPrint();
+        UCI.inputPrint();
+        BoardGeneration.importFEN("rnbqkbnr/ppp1pppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        UCI.inputPrint();
+        long startTime = System.currentTimeMillis();
+        System.out.println(PrincipalVariation.pvSearch(-1000,1000,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ,!WhiteToMove,0));
+        long endTime = System.currentTimeMillis();
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
+        UCI.uciCommunication();
     }
 }
