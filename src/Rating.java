@@ -89,15 +89,16 @@ public class Rating {
         else
             move= Moves.possibleMovesB(WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ);
 
-        return  mobility(player) +
+        return  mobility(player,move) +
                 kingThreats(player,depth) +
                 attacks(player,move,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK,EP,CWK,CWQ,CBK,CBQ) +
                 castle(player) +
-                pieceEvaluations(player) +
+                pieceEvaluations(player,WP,WN,WB,WR,WQ,WK,BP,BN,BB,BR,BQ,BK) +
                 pawnStructure(player);
     }
 
     private static int attacks(final boolean player,String moves,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK,long EP,boolean CWK,boolean CWQ,boolean CBK,boolean CBQ){
+        //white or black should matter
         int attackScore = 0;
         for (int i=0;i<moves.length();i+=4) {
             long WPt = Moves.makeMove(WP, moves.substring(i, i + 4), 'P'), WNt = Moves.makeMove(WN, moves.substring(i, i + 4), 'N'),
@@ -131,12 +132,115 @@ public class Rating {
             if (((WKt&Moves.unsafeForWhite(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && player) ||
                     ((BKt&Moves.unsafeForBlack(WPt,WNt,WBt,WRt,WQt,WKt,BPt,BNt,BBt,BRt,BQt,BKt))==0 && !player)) {
                 //legal move
+                int moved = getMovedPiece(WP,WN,WB,WR,WQ,WK,WPt,WNt,WBt,WRt,WQt,WKt);
+                int attacked = getMovedPiece(BP,BN,BB,BR,BQ,BK,BPt,BNt,BBt,BRt,BQt,BKt);
+                if(moved<=attacked)
+                    attackScore++;
             }
 
         }
 
-
+        return attackScore * ATTACK_MULTIPLIER;
     }
+
+    private static int getMovedPiece(long WP,long WN,long WB,long WR,long WQ,long WK,long WPt,long WNt,long WBt,long WRt,long WQt,long WKt){
+        if(WP!=WPt){
+            return pawn_val;
+        }else if(WN!=WNt){
+            return knight_val;
+        }else if(WB!=WBt){
+            return bishop_val;
+        }else if(WR!=WRt){
+            return rook_val;
+        }else if(WQ!=WQt){
+            return queen_val;
+        }else if(WK!=WKt){
+            return king_val;
+        }
+        return 0;
+    }
+
+    private static int pieceEvaluations(boolean player,long WP,long WN,long WB,long WR,long WQ,long WK,long BP,long BN,long BB,long BR,long BQ,long BK){
+        long P,N,B,R,Q,K;
+        if (player) {
+            P=WP;N=WN;B=WB;R=WR;Q=WQ;K=WK;
+        }else{
+            P=BP;N=BN;B=BB;R=BR;Q=BQ;K=BK;
+        }
+
+        int pieceValuationScore = 0;
+        int material = 0;
+        int numBishops = 0;
+        //pawn
+        long piece = P&~(P-1);
+        while(piece!=0){
+            material+=pawn_val;
+            int index = Long.numberOfTrailingZeros(piece);
+            pieceValuationScore+=pawn_val + pawnBoard[index/8][index%8];
+            P&=~piece;
+            piece = P&~(P-1);
+        }
+        //knight
+
+        piece = N&~(N-1);
+        while(piece!=0){
+            material+=knight_val;
+            int index = Long.numberOfTrailingZeros(piece);
+            pieceValuationScore+=knight_val + knightBoard[index/8][index%8];
+            N&=~piece;
+            piece = N&~(N-1);
+        }
+        //Bishop
+
+        piece = B&~(B-1);
+        while(piece!=0){
+            material+=bishop_val;
+            int index = Long.numberOfTrailingZeros(piece);
+            pieceValuationScore+=bishop_val+bishopBoard[index/8][index%8];
+            numBishops++;
+            B&=~piece;
+            piece = B&~(B-1);
+        }
+        // Rook
+        piece = R&~(R-1);
+        while(piece!=0){
+            material+=rook_val;
+            int index = Long.numberOfTrailingZeros(piece);
+            pieceValuationScore+=rook_val+rookBoard[index/8][index%8];
+            R&=~piece;
+            piece = R&~(R-1);
+        }
+
+        //Queen
+        piece = Q&~(Q-1);
+        while(piece!=0){
+            material+=queen_val;
+            int index = Long.numberOfTrailingZeros(piece);
+            pieceValuationScore+=queen_val+queenBoard[index/8][index%8];
+            Q&=~piece;
+            piece = Q&~(Q-1);
+        }
+        //King
+        piece = K&~(K-1);
+        while(piece!=0){
+            int index = Long.numberOfTrailingZeros(piece);
+            pieceValuationScore+=king_val;
+            if(material>=1750){
+                pieceValuationScore+=kingMidBoard[index/8][index%8];
+            }else{
+                pieceValuationScore+=kingEndBoard[index/8][index%8];
+            }
+            K&=~piece;
+            piece = K&~(K-1);
+        }
+
+        return pieceValuationScore + (numBishops>=2 ? TWO_BISHOPS_BONUS : 0);
+    }
+
+    private static int mobility(boolean player,String moves){
+        return MOBILITY_MULTIPLIER * mobilityRatio();
+    }
+
     public static int rating(int list, int depth) {
         int counter=0, material=rateMaterial();
         counter+=rateAttack();
